@@ -1,0 +1,293 @@
+/* ==========================================================
+   Biberfilm 2026 — Jugend Circus Biber
+   ========================================================== */
+
+:root {
+  --bg: #0a0a0b;
+  --bg-2: #121214;
+  --line: #26262a;
+  --text: #ecebe6;
+  --muted: #86858c;
+  --yellow: #ffd400;
+  --blue: #1a4aa8;
+  --red: #e30613;
+
+  --font-display: "Anton", Impact, "Arial Narrow Bold", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --gutter: clamp(16px, 4vw, 48px);
+  --max: 1200px;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* feines Filmkorn */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  opacity: .07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Lichtkegel hinter dem Player */
+body::after {
+  content: "";
+  position: fixed;
+  left: 50%;
+  top: 55%;
+  width: 120vw;
+  height: 80vh;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center, rgba(255, 212, 0, .07), transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+a { color: inherit; }
+
+.page {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+/* ---------- Topbar ---------- */
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--muted);
+  transition: color .2s;
+}
+.brand:hover { color: var(--text); }
+.brand img { width: 40px; height: 40px; display: block; }
+
+.rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.rec i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 10px var(--red);
+  animation: blink 1.4s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- Titel ---------- */
+
+.hero {
+  padding: clamp(40px, 8vw, 88px) 0 clamp(28px, 5vw, 48px);
+}
+
+.kicker {
+  margin: 0 0 18px;
+  font-size: 12px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.kicker::before {
+  content: "";
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  margin-right: 12px;
+  vertical-align: middle;
+  background: var(--yellow);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: .86;
+  letter-spacing: -.005em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: .22em;
+  /* skaliert mit Breite UND Höhe, damit der Player sichtbar bleibt */
+  font-size: clamp(52px, min(13vw, 17vh), 170px);
+}
+.title__word { color: var(--text); }
+.title__year {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--yellow);
+}
+
+.credit {
+  margin: 24px 0 0;
+  font-size: 13px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.credit a {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid var(--yellow);
+  padding-bottom: 2px;
+  margin-left: 6px;
+  transition: color .2s;
+}
+.credit a span {
+  display: inline-block;
+  margin-left: 4px;
+  color: var(--yellow);
+  transition: transform .2s;
+}
+.credit a:hover { color: var(--yellow); }
+.credit a:hover span { transform: translate(2px, -2px); }
+
+/* ---------- Player ---------- */
+
+.stage { flex: 1; }
+
+.frame {
+  position: relative;
+  padding: clamp(10px, 1.6vw, 18px);
+  /* Player nie höher als der Bildschirm (z.B. Handy quer) */
+  max-width: calc((100vh - 24px) * 16 / 9);
+  max-width: calc((100svh - 24px) * 16 / 9);
+  margin: 0 auto;
+}
+
+.player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 40px 120px -30px rgba(0, 0, 0, .9),
+    0 0 80px -20px rgba(255, 212, 0, .12);
+}
+.player iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Sucher-Ecken */
+.corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 0 solid var(--yellow);
+}
+.corner--tl { top: 0; left: 0; border-top-width: 2px; border-left-width: 2px; }
+.corner--tr { top: 0; right: 0; border-top-width: 2px; border-right-width: 2px; }
+.corner--bl { bottom: 0; left: 0; border-bottom-width: 2px; border-left-width: 2px; }
+.corner--br { bottom: 0; right: 0; border-bottom-width: 2px; border-right-width: 2px; }
+
+.meta {
+  max-width: calc((100vh - 24px) * 16 / 9);
+  max-width: calc((100svh - 24px) * 16 / 9);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px clamp(10px, 1.6vw, 18px) 0;
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Footer ---------- */
+
+.foot {
+  margin-top: clamp(64px, 10vw, 120px);
+  padding: 40px 0 max(40px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+.foot__logo {
+  width: 120px;
+  height: 120px;
+  display: block;
+  transition: transform .4s cubic-bezier(.3, 1.6, .5, 1);
+}
+.foot__logo:hover { transform: rotate(-8deg) scale(1.05); }
+.foot p {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 560px) {
+  .brand span { display: none; }
+  .title__year { -webkit-text-stroke-width: 1.5px; }
+  .meta span:nth-child(2) { display: none; }
+  .corner { width: 18px; height: 18px; }
+  .kicker { letter-spacing: .12em; font-size: 11px; }
+}
+
+/* Handy quer: Kopfbereich kompakter */
+@media (max-height: 500px) and (orientation: landscape) {
+  .top { padding: 12px 0; }
+  .hero { padding: 24px 0 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rec i { animation: none; }
+  * { transition: none !important; }
+}
